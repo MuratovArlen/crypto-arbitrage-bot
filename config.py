@@ -37,15 +37,6 @@ class Settings(BaseSettings):
     news_source_url: str = ""
     hft_quote: str = "KRW"
 
-    live: bool = False
-    live_confirm: str = ""
-    price_band_bps: int = 30
-    max_slippage_bps_live: int = 25
-    min_depth_usd: float = 100.0
-    pnl_stop_usd: float = -20.0
-    storage_backend: str = "csv"
-
-
     # pydantic v2: конфиг через model_config
     model_config = SettingsConfigDict(
         env_file=".env",

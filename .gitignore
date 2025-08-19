@@ -10,7 +10,7 @@ __pycache__/
 
 # Virtual env
 .venv/
-env/
+.env/
 venv/
 ENV/
 
@@ -41,6 +41,7 @@ dmypy.json
 *.pid
 *.tar
 *.bak
+docker-compose.yml
 
 # Jupyter
 .ipynb_checkpoints/
