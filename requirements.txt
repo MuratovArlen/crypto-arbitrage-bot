@@ -1,0 +1,12 @@
+ccxt
+pydantic
+python-dotenv
+uvloop
+orjson
+pytest
+mypy
+ruff
+pydantic-settings
+aiohttp
+beautifulsoup4
+lxml
