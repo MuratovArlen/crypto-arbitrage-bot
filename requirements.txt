@@ -7,6 +7,6 @@ pytest
 mypy
 ruff
 pydantic-settings
-aiohttp
-beautifulsoup4
 lxml
+aiohttp>=3.9
+beautifulsoup4>=4.12

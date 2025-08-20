@@ -15,6 +15,7 @@ from engine.risk import AntiFlood, DailyLimitUsd
 from storage.journal_csv import append_trade
 from web.metrics import State, run_http
 from hft_bithumb.runner import run_hft
+from typing import Optional
 
 s = load_settings()
 

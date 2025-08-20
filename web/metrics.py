@@ -104,8 +104,11 @@ async def handle_simulate_news(request: web.Request) -> web.Response:
             bid = float(ob["bids"][0][0])
             ask = float(ob["asks"][0][0])
 
-            usd = float(getattr(s, "hft_order_usd", 50.0))
-            amount = bh.normalize_amount(sym, usd / ask)
+            min_cost = bh.min_notional(sym) or 0.0
+            base_notional = float(getattr(s, "hft_order_usd", 50.0))
+            notional = max(base_notional, min_cost)
+
+            amount = bh.normalize_amount(sym, notional / ask)
             if amount <= 0:
                 return web.json_response({"ok": False, "error": "amount too small"}, status=400)
 
