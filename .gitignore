@@ -49,3 +49,4 @@ docker-compose.yml
 # System
 .DS_Store
 Thumbs.db
+.env
