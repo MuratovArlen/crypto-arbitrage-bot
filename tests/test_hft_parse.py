@@ -2,6 +2,7 @@ from typing import Optional, Any
 from bs4 import BeautifulSoup  # type: ignore
 import re
 
+
 TICKER_RE = re.compile(r"\b([A-Z]{2,10})\b")
 
 async def fetch_html(session: Any, url: str) -> str:
