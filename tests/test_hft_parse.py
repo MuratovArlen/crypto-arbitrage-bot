@@ -1,35 +1,33 @@
-from typing import Optional, Any
-from bs4 import BeautifulSoup  # type: ignore
-import re
+import pytest
+
+from hft_bithumb.news import extract_ticker, quick_sentiment, parse_news_html
 
 
-TICKER_RE = re.compile(r"\b([A-Z]{2,10})\b")
+def test_extract_ticker_from_korean_title():
+    # ТЗ: строка вида "스파크(SPK) 원화 마켓 추가 …"
+    html = "<html><head><title>스파크(SPK) 원화 마켓 추가 (거래 오픈 오후 07:30 예정)</title></head><body></body></html>"
+    parsed = parse_news_html(html)
+    assert parsed is not None
+    assert parsed["ticker"] == "SPK"
 
-async def fetch_html(session: Any, url: str) -> str:
-    async with session.get(url, timeout=5) as r:
-        r.raise_for_status()
-        return await r.text()
 
-def extract_ticker(text: str) -> Optional[str]:
-    for m in TICKER_RE.finditer(text):
-        sym = m.group(1)
-        if 2 <= len(sym) <= 10:
-            return sym
-    return None
+def test_parse_returns_none_when_no_ticker():
+    html = "<html><head><title>Planned maintenance window announced</title></head></html>"
+    assert parse_news_html(html) is None
 
-def quick_sentiment(text: str) -> str:
-    t = text.lower()
-    if any(w in t for w in ["listing", "lists", "listed", "partnership", "launch"]):
-        return "positive"
-    if any(w in t for w in ["delist", "hack", "suspend"]):
-        return "negative"
-    return "neutral"
 
-def parse_news_html(html: str):
-    soup = BeautifulSoup(html, "html.parser")
-    title = soup.title.text.strip() if soup.title else ""
-    text = title or soup.get_text(separator=" ", strip=True)[:500]
-    ticker = extract_ticker(text)
-    if not ticker:
-        return None
-    return {"title": title, "text": text, "ticker": ticker, "sentiment": quick_sentiment(text)}
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("Bithumb lists NEW token on KRW market", "positive"),
+        ("Emergency notice: market suspended due to hack", "negative"),
+        ("General update without strong words", "neutral"),
+    ],
+)
+def test_quick_sentiment(text, expected):
+    assert quick_sentiment(text) == expected
+
+
+def test_extract_ticker_simple_english():
+    text = "New listing: ABC will launch today"
+    assert extract_ticker(text) == "ABC"
