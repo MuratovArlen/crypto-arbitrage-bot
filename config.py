@@ -34,10 +34,10 @@ class Settings(BaseSettings):
     hft_tickers_whitelist: List[str] = []
     bithumb_api_key: str = ""
     bithumb_api_secret: str = ""
-    news_source_url: str = ""
     hft_quote: str = "KRW"
+    hft_budget_quote: float = 100000
+    news_source_url: str = ""
 
-    # pydantic v2: конфиг через model_config
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

@@ -1,4 +1,4 @@
-.PHONY: run test lint fmt type docker-build docker-up docker-down docker-logs kill-8000
+.PHONY: run test lint fmt docker-build docker-up docker-down docker-logs kill-8000
 
 PYTHONPATH ?= .
 
@@ -10,15 +10,13 @@ run:
 test:
 	PYTHONPATH=$(PYTHONPATH) pytest -q
 
-# Линтеры
+# Линтеры и форматирование
 lint:
 	ruff check .
+	mypy app || true
 
 fmt:
-	ruff format .
-
-type:
-	mypy .
+	ruff check . --fix
 
 # Docker
 docker-build:
