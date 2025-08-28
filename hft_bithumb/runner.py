@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 from typing import List
-from aiohttp import ClientSession
+from aiohttp import ClientSession # type: ignore
 
 from exchanges.bithumb import BithumbClient
 from engine.executor import Executor
@@ -21,7 +21,7 @@ def choose_symbol_on_bithumb(bh: BithumbClient, base: str, preferred_quote: str)
     preferred_quote = preferred_quote.upper()
 
     want = f"{base}/{preferred_quote}"
-    if want in bh._markets:  # markets загружены в __aenter__
+    if want in bh._markets:
         return want
 
     for s, m in bh._markets.items():
@@ -46,7 +46,7 @@ async def run_hft(settings, metrics_state) -> None:
     async with BithumbClient(settings.bithumb_api_key, settings.bithumb_api_secret) as bh, \
                ClientSession() as http:
 
-        execu = Executor(bh, bh, dry_run=settings.dry_run)  # buy & sell на одной бирже, dry-run
+        execu = Executor(bh, bh, dry_run=settings.dry_run)
 
         while True:
             try:
@@ -60,21 +60,20 @@ async def run_hft(settings, metrics_state) -> None:
                 base = signal["ticker"].upper()
                 sym = choose_symbol_on_bithumb(bh, base, quote)
 
-                # цены рынка
                 ob = await bh.get_orderbook(sym)
                 bid = float(ob["bids"][0][0])
                 ask = float(ob["asks"][0][0])
 
-                usd = float(settings.hft_order_usd)
-                amount = bh.normalize_amount(sym, usd / ask)
+                quote = getattr(settings, "hft_quote", "KRW")
+                budget = float(getattr(settings, "hft_budget_quote", 100000.0))
+                amount = bh.normalize_amount(sym, budget / ask)
+
                 if amount <= 0:
                     await asyncio.sleep(settings.hft_poll_sec)
                     continue
 
-                # dry-run хедж на одной бирже
                 await execu.market_hedge(sym, amount)
 
-                # фиктивный pnl (как будто моментально закрылись по bid)
                 pnl = (bid - ask) * amount
                 append_trade({
                     "ts": datetime.utcnow().isoformat(),
