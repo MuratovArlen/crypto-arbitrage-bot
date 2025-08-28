@@ -2,12 +2,10 @@ import storage.journal_csv as jc
 from pathlib import Path
 
 def test_append_and_summary(tmp_path: Path):
-    # перенаправим CSV в tmp
     old = jc.CSV_PATH
     try:
         jc.CSV_PATH = tmp_path / "trades.csv"
 
-        # записываем 2 сделки
         jc.append_trade({
             "ts": "2025-01-01T00:00:00",
             "symbol": "BTC/USDT",
@@ -29,7 +27,6 @@ def test_append_and_summary(tmp_path: Path):
             "pnl": -0.01,
         })
 
-        # читаем последние и сводку
         rows = jc.read_last_trades(limit=10)
         s = jc.pnl_summary()
 
