@@ -1,15 +1,9 @@
-from typing import Any, Optional, Dict
 import re
 
-try:
-    from aiohttp import ClientSession  # type: ignore
-except Exception:
-    ClientSession = None  # type: ignore
+from typing import Any, Optional, Dict
+from aiohttp import ClientSession
+from bs4 import BeautifulSoup
 
-try:
-    from bs4 import BeautifulSoup  # type: ignore
-except Exception:
-    BeautifulSoup = None  # type: ignore
 
 TICKER_RE = re.compile(r"\b([A-Z]{2,10})\b")
 
