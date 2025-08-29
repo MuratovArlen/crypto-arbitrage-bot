@@ -1,6 +1,6 @@
 import math
 
-from aiohttp import web # type: ignore
+from aiohttp import web
 from typing import Any, Dict
 from datetime import datetime
 from exchanges.bithumb import BithumbClient
